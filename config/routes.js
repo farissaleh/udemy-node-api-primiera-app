@@ -1,20 +1,33 @@
 const exprees = require('express')
+const auth = require('./auth')
 
 module.exports = function(server){
 
+    //Public Routes
+    const publicApi = exprees.Router()
+    server.use('/public', publicApi)
+    
+    const AuthService = require('../api/user/authService')
+    publicApi.post('/login', AuthService.login)
+    publicApi.post('/signup', AuthService.signup)
+    publicApi.post('/validateToken', AuthService.validateToken)
+
     //API Routes
 
-    const router = exprees.Router()
-    server.use('/api', router)
+    const protectedApi = exprees.Router()
+    protectedApi.use(auth)
+    
+    server.use('/api', protectedApi)
 
     //Rotas da API
     const billingCycleService = require('../api/billingCycle/billingCycleService')
     //Registros dos métodos
-    billingCycleService.register(router,'/billingCycles') //Registra o noderestful_model dentro do router na url 
+    billingCycleService.register(protectedApi,'/billingCycles') //Registra o noderestful_model dentro do router na url 
 
     //Rotas sem o uso do node restful
 
     const billingSummaryService = require('../api/billingSummary/billingSummaryService')
-    router.route('/billingSummary').get(billingSummaryService.getSummary)
+    protectedApi.route('/billingSummary').get(billingSummaryService.getSummary)
+    //protectedApi.get('/billingSummary',billingSummaryService.getSummary)
 
 }
