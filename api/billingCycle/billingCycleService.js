@@ -31,7 +31,7 @@ BillingCycle.updateOptions({new: true, runValidators: true})//Toda vez que realz
 
 BillingCycle.route('count', function(req,res,next){//Rotas express
     //Count Mongo
-    BillingCycle.count(function(error, value){
+    BillingCycle.countDocuments(function(error, value){
         if(error) {
             res.status(500).json({errors: [error]})
         }else {
