@@ -4,13 +4,13 @@ const auth = require('./auth')
 module.exports = function(server){
 
     //Public Routes
-    const publicApi = exprees.Router()
-    server.use('/public', publicApi)
+    const openApi = exprees.Router()
+    server.use('/oapi', openApi)
     
     const AuthService = require('../api/user/authService')
-    publicApi.post('/login', AuthService.login)
-    publicApi.post('/signup', AuthService.signup)
-    publicApi.post('/validateToken', AuthService.validateToken)
+    openApi.post('/login', AuthService.login)
+    openApi.post('/signup', AuthService.signup)
+    openApi.post('/validateToken', AuthService.validateToken)
 
     //API Routes
 

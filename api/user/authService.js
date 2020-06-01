@@ -37,6 +37,7 @@ const  login = function(req, res , next){
 }
 
 //Validar se o token  está valido
+//res.sendStatus
 const validateToken = function(req, res, next){
     const token = req.body.token || ''
     //Verifica se o token é válido
@@ -53,11 +54,11 @@ const signup = (req, res, next) => {
 
     //match ==
     if(!email.match(emailRegex)){
-        return res.send(400).send({errors : ['O email informado está inválido']})
+        return res.status(400).send({errors : ['O email informado está inválido']})
     }
 
     if(!password.match(passwordRegex)){
-        return res.send(400).send({errors : ['A senha precisar ter: um letra maiúsucla, uma letra minúscula, um número, um caracter especial(@#$%) e tamanho entre 6-12']})
+        return res.status(400).send({errors : ['A senha precisar ter: um letra maiúsucla, uma letra minúscula, um número, um caracter especial(@#$%) e tamanho entre 6-12']})
     }
 
     //Criptografia da senha
@@ -67,7 +68,7 @@ const signup = (req, res, next) => {
     const passwordHash = bcrypt.hashSync(password, salt)
 
     //Verfica a confirmação da senha pelo hash da primeira
-    if (!bcrypt.compareSync(confirmPassword, password)) {
+    if (!bcrypt.compareSync(confirmPassword, passwordHash)) {
         return res.status(400).send({errors: ['Senhas não conferem.']})
     }
 
@@ -77,8 +78,8 @@ const signup = (req, res, next) => {
         }else if (user) {
             return res.status(400).send({errors: ['Usuário já cadastrado.']})
         }else {
-            const newUser = { name, email, password: passwordHash}
-            User.save(newUser, function(err) {
+            const newUser = new User({ name, email, password: passwordHash})
+            newUser.save(function(err) {
                 if (err) {
                     return sendErrorsFromDB(res, err)
                 }else {
@@ -89,5 +90,5 @@ const signup = (req, res, next) => {
     })
 }
 
-module.exports = { login , signup ,validateToken}
+module.exports = { login ,signup ,validateToken }
 
